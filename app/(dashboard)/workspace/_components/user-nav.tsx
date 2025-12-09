@@ -3,8 +3,17 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  LogoutLink,
+  PortalLink,
+} from "@kinde-oss/kinde-auth-nextjs/components";
+import { CreditCard, LogOut, User } from "lucide-react";
 
 const user = {
   picture: "https://avatars.githubusercontent.com/u/124599?v=4",
@@ -37,7 +46,48 @@ export function UserNav() {
         side="right"
         sideOffset={8}
         className="w-[200px]"
-      ></DropdownMenuContent>
+      >
+        <DropdownMenuLabel className="font-normal flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+          <Avatar className="relative size-8 rounded-lg">
+            <AvatarImage
+              src={user.picture}
+              alt="User Image"
+              className="object-cover"
+            />
+            <AvatarFallback>
+              {user.given_name.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <p className="truncate font-medium">{user.given_name}</p>
+            <p className="text-muted-foreground truncate text-xs">
+              Gideon@gmail.com
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem asChild>
+            <PortalLink>
+              <User />
+              Account
+            </PortalLink>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <PortalLink>
+              <CreditCard />
+              Billing
+            </PortalLink>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <LogoutLink>
+              <LogOut />
+              Logout
+            </LogoutLink>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
     </DropdownMenu>
   );
 }
