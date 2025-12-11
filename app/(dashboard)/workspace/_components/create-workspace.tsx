@@ -1,6 +1,6 @@
 "use client";
 
-import { workspaceSchema } from "@/app/schemas/workspace";
+import { workspaceSchema, WorkspaceSchemaType } from "@/app/schemas/workspace";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,20 +28,46 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 export function CreateWorkspace() {
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  const form = useForm({
+  const form = useForm<WorkspaceSchemaType>({
     resolver: zodResolver(workspaceSchema),
     defaultValues: {
       name: "",
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const createWorkspaceMutation = useMutation(
+    orpc.workspace.create.mutationOptions({
+      onSuccess: (newWorkspace) => {
+        toast.success(
+          `Workspace "${newWorkspace.workspaceName}" created successfully`
+        );
+        queryClient.invalidateQueries({
+          queryKey: orpc.workspace.list.queryKey(),
+        });
+
+        form.reset();
+        setOpen(false);
+      },
+      onError: (error) => {
+        toast.error("Failed to create workspace");
+      },
+    })
+  );
+
+  const onSubmit = (values: WorkspaceSchemaType) => {
+    createWorkspaceMutation.mutate(values);
   };
+
+  const isPending = createWorkspaceMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -77,13 +103,20 @@ export function CreateWorkspace() {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="My Workspace" {...field} />
+                    <Input
+                      disabled={isPending}
+                      placeholder="My Workspace"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Create Workspace</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending && <Spinner />}
+              Create Workspace
+            </Button>
           </form>
         </Form>
       </DialogContent>
