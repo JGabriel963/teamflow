@@ -19,4 +19,7 @@ export const base = os.$context<{ request: Request }>().errors({
   INTERNAL_SERVER_ERROR: {
     message: "Internal server error.",
   },
+  TOO_MANY_REQUESTS: {
+    message: "Too many requests.",
+  },
 });

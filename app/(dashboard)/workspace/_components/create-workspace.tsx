@@ -32,6 +32,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { isDefinedError } from "@orpc/client";
 
 export function CreateWorkspace() {
   const [open, setOpen] = useState(false);
@@ -58,7 +59,18 @@ export function CreateWorkspace() {
         setOpen(false);
       },
       onError: (error) => {
-        toast.error("Failed to create workspace");
+        // toast.error("Failed to create workspace");
+        if (isDefinedError(error)) {
+          if (error.code === "TOO_MANY_REQUESTS") {
+            toast.error(error.message);
+            return;
+          }
+
+          toast.error(error.message);
+          return;
+        }
+
+        toast.error("Failed to create workspace, try again");
       },
     })
   );
