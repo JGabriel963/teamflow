@@ -12,8 +12,8 @@ import { heavyWriteSecurityMiddleware } from "../middlewares/arcjet/heavy-write"
 export const listWorkspaces = base
   .use(requiredAuthMiddleware)
   .use(requiredWorkspaceMiddleware)
-  .use(standardSecurityMiddleware)
-  .use(heavyWriteSecurityMiddleware)
+  // .use(standardSecurityMiddleware)
+  // .use(heavyWriteSecurityMiddleware)
   .route({
     method: "GET",
     path: "/workspace",

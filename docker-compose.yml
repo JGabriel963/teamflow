@@ -1,0 +1,10 @@
+services:
+  db:
+    image: bitnami/postgresql:latest
+    container_name: teamflow-db
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=teamflow
+    ports:
+      - "5432:5432"
